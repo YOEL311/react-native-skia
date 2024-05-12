@@ -65,7 +65,7 @@ export const useVideo = (
   });
   useEffect(() => {
     return () => {
-      video?.dispose();
+      //video?.dispose();
     };
   }, [video]);
   return currentFrame;
