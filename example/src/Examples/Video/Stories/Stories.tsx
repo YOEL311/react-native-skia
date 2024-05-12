@@ -20,6 +20,8 @@ import { snapPoint } from "../../../components/Animations";
 import { cube, transition } from "../gltransitions";
 
 import { useAssets } from "./Assets";
+import { LeftScreen, leftScreen } from "./LeftScreen";
+import { RightScreen } from "./RightScreen";
 
 const { width, height } = Dimensions.get("window");
 const transitions = [cube, cube, cube].map((t) => transition(t));
@@ -64,10 +66,10 @@ export const Stories = () => {
         .onEnd(({ velocityX }) => {
           const dst = snapPoint(progressRight.value, velocityX / width, [0, 1]);
           progressRight.value = withTiming(dst, { duration }, () => {
-            runOnJS(previous)();
+            // runOnJS(previous)();
           });
         }),
-    [previous, progressRight]
+    [progressRight]
   );
   const panLeft = useMemo(
     () =>
@@ -83,10 +85,10 @@ export const Stories = () => {
         .onEnd(({ velocityX }) => {
           const dst = snapPoint(progressLeft.value, -velocityX / width, [0, 1]);
           progressLeft.value = withTiming(dst, { duration }, () => {
-            runOnJS(next)();
+            // runOnJS(next)();
           });
         }),
-    [next, progressLeft]
+    [progressLeft]
   );
 
   const uniformsRight = useDerivedValue(() => {
@@ -110,15 +112,16 @@ export const Stories = () => {
     return at(transitions, offset)!;
   });
 
-  const video1 = useDerivedValue(() => {
-    return at(assets, offset - 1)!.value;
+  const left = useDerivedValue(() => {
+    const img = at(assets, offset - 1)!.value;
+    return leftScreen(img, progressLeft.value);
   });
 
-  const video2 = useDerivedValue(() => {
+  const center = useDerivedValue(() => {
     return at(assets, offset)!.value;
   });
 
-  const video3 = useDerivedValue(() => {
+  const rigth = useDerivedValue(() => {
     return at(assets, offset + 1)!.value;
   });
 
@@ -130,20 +133,20 @@ export const Stories = () => {
             <Shader source={transition1} uniforms={uniformsRight}>
               <Shader source={transition2} uniforms={uniformsLeft}>
                 <ImageShader
-                  image={video1}
+                  image={rigth}
                   fit="cover"
                   width={width}
                   height={height}
                 />
                 <ImageShader
-                  image={video2}
+                  image={center}
                   fit="cover"
                   width={width}
                   height={height}
                 />
               </Shader>
               <ImageShader
-                image={video3}
+                image={left}
                 fit="cover"
                 width={width}
                 height={height}
