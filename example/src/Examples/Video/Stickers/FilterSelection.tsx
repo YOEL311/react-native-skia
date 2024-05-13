@@ -55,6 +55,29 @@ const filters = [
     matrix: [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
   },
   {
+    name: "Duotone 1",
+    matrix: [
+      0.9, 0, 0, 0, 0.4, 0.95, 0, 0, 0, -0.1, -0.2, 0, 0, 0, 0.65, 0, 0, 0, 1,
+      0,
+    ],
+  },
+
+  {
+    name: "Duotone 2",
+    matrix: [
+      0.95, 0, 0, 0, 0.05, 0.65, 0, 0, 0, 0.15, 0.15, 0, 0, 0, 0.5, 0, 0, 0, 1,
+      0,
+    ],
+  },
+  {
+    name: "Duotone 3",
+    matrix: [
+      0.95, 0, 0, 0, 0.05, 0.85, 0, 0, 0, 0.15, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 1,
+      0,
+    ],
+  },
+
+  {
     name: "Sepia",
     matrix: [
       0.393, 0.768, 0.188, 0, 0, 0.349, 0.685, 0.167, 0, 0, 0.272, 0.533, 0.13,
@@ -62,8 +85,14 @@ const filters = [
     ],
   },
   {
-    name: "Duotone red",
-    matrix: [1, 1, 1, 0, 0, 0, 0, 0 - 0.5, 0, 0, 0, 0, 0.2, 0, 0, 0, 0, 1, 0],
+    name: "Purple",
+    matrix: [
+      1, -0.2, 0, 0, 0, 0, 1, 0, -0.1, 0, 0, 1.2, 1, 0.1, 0, 0, 0, 1.7, 1, 0,
+    ],
+  },
+  {
+    name: "Black and white",
+    matrix: [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0],
   },
 ];
 
@@ -76,8 +105,15 @@ export const FilterSelection = ({ image, currentFilter }: FilterProps) => {
   return (
     <View
       style={{ ...StyleSheet.absoluteFillObject, justifyContent: "flex-end" }}
+      pointerEvents="box-none"
     >
-      <View style={{ height: 300 }}>
+      <View
+        style={{
+          height: 200,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          paddingTop: 16,
+        }}
+      >
         <ScrollView style={{ flex: 1 }} horizontal>
           {filters.map((filter, index) => (
             <Filter
