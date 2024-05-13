@@ -12,7 +12,6 @@ import {
   RuntimeShader,
   Skia,
   Text,
-  useImage,
 } from "@shopify/react-native-skia";
 import { Dimensions, PixelRatio } from "react-native";
 import {
@@ -21,6 +20,8 @@ import {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+
+import { useVideoFromAsset } from "../../../components/Animations";
 
 import { Trash } from "./Icons";
 import { Labels } from "./Labels";
@@ -61,17 +62,20 @@ export const Project = ({
   project: { picture, title, color, size, duration },
 }: ProjectProps) => {
   const { width } = outer;
-  const image = useImage(picture);
+  const pause = useSharedValue(true);
+  const image = useVideoFromAsset(picture, pause, 4);
   const origin = useSharedValue(width);
   const pointer = useSharedValue(width);
   const onTouch = useTouchHandler({
     onStart: ({ x }) => {
       origin.value = x;
+      pause.value = false;
     },
     onActive: ({ x }) => {
       pointer.value = x;
     },
     onEnd: () => {
+      pause.value = true;
       pointer.value = withTiming(width, {
         duration: 450,
         easing: Easing.inOut(Easing.ease),

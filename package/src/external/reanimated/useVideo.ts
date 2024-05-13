@@ -1,4 +1,4 @@
-import type { FrameInfo, SharedValue } from "react-native-reanimated";
+import { isSharedValue, useDerivedValue, type FrameInfo, type SharedValue } from "react-native-reanimated";
 import { useEffect, useMemo } from "react";
 
 import { Skia } from "../../skia/Skia";
@@ -7,19 +7,41 @@ import { Platform } from "../../Platform";
 
 import Rea from "./ReanimatedProxy";
 
+type Animated<T> = SharedValue<T> | T;
+
+interface PlaybackOptions {
+  playbackSpeed: Animated<number>;
+  looping: Animated<boolean>;
+  paused: Animated<boolean>;
+}
+
+const defaultOptions = {
+  playbackSpeed: 1,
+  looping: true,
+  paused: false,
+};
+
+const dematerialize = <T>(value: Animated<T>) => {
+  "worklet";
+  return isSharedValue(value) ? value : {value};
+};
+
 export const useVideo = (
   source: string | null,
-  looped?: boolean,
-  paused?: SharedValue<boolean>
+  userOptions?: Partial<PlaybackOptions>
 ) => {
+  const options = { ...defaultOptions, ...userOptions };
+  const paused = dematerialize(options.paused);
+  const playbackSpeed = dematerialize(options.playbackSpeed);
+  const looping = dematerialize(options.looping);
   const video = useMemo(() => (source ? Skia.Video(source) : null), [source]);
   const defaultPaused = Rea.useSharedValue(false);
   const isPaused = paused ?? defaultPaused;
   const currentFrame = Rea.useSharedValue<null | SkImage>(null);
   const lastTimestamp = Rea.useSharedValue(-1);
   const startTimestamp = Rea.useSharedValue(-1);
-  const frameDuration = useMemo(
-    () => (video ? (1 / video.framerate()) * 1000 : -1),
+  const frameDuration = useDerivedValue(
+    () => (video ? (1 / video.framerate()) * 1000 * 1/playbackSpeed.value : -1),
     [video]
   );
   const duration = useMemo(() => (video ? video.duration() : -1), [video]);
@@ -35,7 +57,7 @@ export const useVideo = (
     const elapsed = timestamp - lastTimestamp.value;
 
     // Check if it's time to switch frames based on frame duration
-    if (elapsed < frameDuration) {
+    if (elapsed < frameDuration.value) {
       return;
     }
 
@@ -44,7 +66,7 @@ export const useVideo = (
       startTimestamp.value = timestamp;
     }
     const currentTimestamp = timestamp - startTimestamp.value;
-    if (currentTimestamp > duration && looped) {
+    if (currentTimestamp > duration && looping.value) {
       video.seek(0);
       startTimestamp.value = timestamp;
     }

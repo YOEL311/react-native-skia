@@ -13,7 +13,7 @@ const projects: Project[] = [
     title: "Zürich",
     size: "45MB",
     duration: "1:06m",
-    picture: require("./assets/zurich2.jpg"),
+    picture: require("../../../assets/videos/big/zurich.mov"),
     color: "#BDA098",
   },
   {
@@ -21,7 +21,7 @@ const projects: Project[] = [
     title: "Oslo",
     size: "1GB",
     duration: "5:02m",
-    picture: require("./assets/oslo2.jpg"),
+    picture: require("../../../assets/videos/big/oslo.mov"),
     color: "#59659a",
   },
   {
@@ -29,7 +29,7 @@ const projects: Project[] = [
     title: "Kraków",
     size: "500MB",
     duration: "11:04m",
-    picture: require("./assets/krakow.jpg"),
+    picture: require("../../../assets/videos/big/krakow.mov"),
     color: "#BAB9B0",
   },
 ];

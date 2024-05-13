@@ -2,6 +2,7 @@ import type { Vector } from "@shopify/react-native-skia";
 import { useVideo } from "@shopify/react-native-skia";
 import { useAssets } from "expo-asset";
 import { useEffect } from "react";
+import type { SharedValue } from "react-native-reanimated";
 import {
   Easing,
   cancelAnimation,
@@ -10,12 +11,20 @@ import {
   withTiming,
 } from "react-native-reanimated";
 
-export const useVideoFromAsset = (mod: number) => {
+export const useVideoFromAsset = (
+  mod: number,
+  paused?: SharedValue<boolean>,
+  playbackSpeed = 1
+) => {
   const [assets, error] = useAssets([mod]);
   if (error) {
     throw error;
   }
-  return useVideo(assets ? assets[0].localUri : null, true);
+  return useVideo(assets ? assets[0].localUri : null, {
+    looping: true,
+    paused,
+    playbackSpeed,
+  });
 };
 
 export const useLoop = ({ duration }: { duration: number }) => {
