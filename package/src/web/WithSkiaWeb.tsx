@@ -1,7 +1,9 @@
-import { LoadSkiaWeb } from "@shopify/react-native-skia/lib/module/web";
 import type { ComponentProps, ComponentType } from "react";
-import { useMemo, lazy, Suspense, forwardRef } from "react";
-import { Platform } from "react-native";
+import React, { useMemo, lazy, Suspense, forwardRef } from "react";
+
+import { Platform } from "../Platform";
+
+import { LoadSkiaWeb } from "./LoadSkiaWeb";
 
 interface WithSkiaProps {
   fallback?: ComponentProps<typeof Suspense>["fallback"];
