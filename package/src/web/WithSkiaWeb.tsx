@@ -1,9 +1,7 @@
+import { LoadSkiaWeb } from "@shopify/react-native-skia/lib/module/web";
 import type { ComponentProps, ComponentType } from "react";
-import React, { useMemo, lazy, Suspense } from "react";
-
-import { Platform } from "../Platform";
-
-import { LoadSkiaWeb } from "./LoadSkiaWeb";
+import { useMemo, lazy, Suspense, forwardRef } from "react";
+import { Platform } from "react-native";
 
 interface WithSkiaProps {
   fallback?: ComponentProps<typeof Suspense>["fallback"];
@@ -11,11 +9,7 @@ interface WithSkiaProps {
   opts?: Parameters<typeof LoadSkiaWeb>[0];
 }
 
-export const WithSkiaWeb = ({
-  getComponent,
-  fallback,
-  opts,
-}: WithSkiaProps) => {
+const WithSkiaWeb = forwardRef(({ getComponent, fallback, opts, ...rest }: WithSkiaProps, ref) => {
   const Inner = useMemo(
     // TODO: investigate
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,17 +18,20 @@ export const WithSkiaWeb = ({
         if (Platform.OS === "web") {
           await LoadSkiaWeb(opts);
         } else {
-          console.warn(
-            "<WithSkiaWeb /> is only necessary on web. Consider not using on native."
-          );
+          // eslint-disable-next-line no-console
+          console.warn("<WithSkiaWeb /> is only necessary on web. Consider not using on native.");
         }
         return getComponent();
       }),
-    [getComponent, opts]
+    [getComponent, opts],
   );
+
   return (
     <Suspense fallback={fallback ?? null}>
-      <Inner />
+      <Inner {...rest} ref={ref} />
     </Suspense>
   );
-};
+});
+
+WithSkiaWeb.displayName = "WithSkiaWeb";
+export { WithSkiaWeb };
